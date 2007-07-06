@@ -4,7 +4,7 @@
 %define sumajor 0
 %define libnamesu %mklibname sidutils %{sumajor}
 %define version 2.1.1
-%define release %mkrel 5
+%define release %mkrel 6
 %define builders %{_libdir}/sidplay/builders
 
 
