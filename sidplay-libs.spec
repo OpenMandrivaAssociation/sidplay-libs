@@ -17,7 +17,6 @@ Patch:		sidplay-libs-2.1.1-gcc4.1.patch
 License:        GPL
 Group:          System/Libraries
 URL:            http://sidplay2.sourceforge.net/
-BuildRoot:      %{_tmppath}/%{name}-buildroot
 BuildRequires:	automake1.8
 BuildRequires:  chrpath
 
