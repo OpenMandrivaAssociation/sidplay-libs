@@ -16,6 +16,7 @@ Source:         http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar
 Patch:		sidplay-libs-2.1.1-gcc4.1.patch
 License:        GPL
 Group:          System/Libraries
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 URL:            http://sidplay2.sourceforge.net/
 BuildRequires:	automake1.8
 BuildRequires:  chrpath
