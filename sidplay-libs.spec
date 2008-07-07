@@ -3,8 +3,10 @@
 %define libname    %mklibname sidplay %{spmajor}
 %define sumajor 0
 %define libnamesu %mklibname sidutils %{sumajor}
+%define develnamesu %mklibname -d sidutils
+%define staticdevelnamesu %mklibname -s -d sidutils
 %define version 2.1.1
-%define release %mkrel 6
+%define release %mkrel 7
 %define builders %{_libdir}/sidplay/builders
 
 
@@ -13,8 +15,8 @@ Name:           %{name}
 Version:        %{version}
 Release:        %{release}
 Source:         http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
-Patch:		sidplay-libs-2.1.1-gcc4.1.patch
-License:        GPL
+Patch:		sidplay-libs-2.1.1-gcc4.3.patch
+License:        GPLv2+
 Group:          System/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 URL:            http://sidplay2.sourceforge.net/
@@ -45,6 +47,7 @@ A ReSID Builder Class using a modified version of ReSID 0.13
 is included in this package. Alternative/updated classes can be
 obtained from the SIDPlay2 homepage.
 
+#gw don't use libsidplay-devel here, that's libsidplay1
 %package -n %libname-devel
 Summary:        Development headers and libraries for %{libname}
 Group:          Development/C++
@@ -67,23 +70,26 @@ to the C64 emulation.  Utilities include decoding and obtaining tune
 lengths from the songlength database, INI file format parser and SID
 filter files (types 1 and 2).
 
-%package -n %libnamesu-devel
+%package -n %develnamesu
 Summary:        Development headers and libraries for libsidutils
 Group:          Development/C++
 Requires:       %libnamesu = %{version}
 Requires:	%libname-devel = %version
 Provides:       libsidutils-devel = %{version}-%release
+Obsoletes:	%mklibname -d sidutils 0
 
-%description -n %libnamesu-devel
+%description -n %develnamesu
 This package includes the header and library files necessary
 for developing applications to use %libnamesu.
 
-%package -n %libnamesu-static-devel
+%package -n %staticdevelnamesu
 Summary:        Static library for %libnamesu
 Group:          Development/C++
-Requires:       %libnamesu-devel = %{version}
+Requires:       %develnamesu = %{version}
+Obsoletes:	%mklibname -s -d sidutils 0
+Provides:	libsidutils-static-devel = %version-%release
 
-%description -n %libnamesu-static-devel
+%description -n %staticdevelnamesu
 This package includes the static library file necessary
 for developing applications to use %libnamesu.
 
@@ -165,7 +171,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc libsidutils/AUTHORS libsidutils/ChangeLog libsidutils/README libsidutils/TODO
 %{_libdir}/libsidutils*.so.*
 
-%files -n %libnamesu-devel
+%files -n %develnamesu
 %defattr(-,root,root)
 %dir %{_includedir}/sidplay/utils/
 %{_includedir}/sidplay/utils/*
@@ -173,6 +179,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libsidutils*.so
 %_libdir/pkgconfig/libsidutils*pc
 
-%files -n %libnamesu-static-devel
+%files -n %staticdevelnamesu
 %defattr(-,root,root)
 %{_libdir}/libsidutils*.a
