@@ -6,7 +6,7 @@
 %define develnamesu %mklibname -d sidutils
 %define staticdevelnamesu %mklibname -s -d sidutils
 %define version 2.1.1
-%define release %mkrel 7
+%define release %mkrel 8
 %define builders %{_libdir}/sidplay/builders
 
 
@@ -16,6 +16,8 @@ Version:        %{version}
 Release:        %{release}
 Source:         http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
 Patch:		sidplay-libs-2.1.1-gcc4.3.patch
+#gw from xsidplay 2.0.3
+Patch1:		cia1.patch
 License:        GPLv2+
 Group:          System/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -97,6 +99,7 @@ for developing applications to use %libnamesu.
 %prep
 %setup -q 
 %patch -p1 -b .gcc
+%patch1 -p1
 aclocal-1.8 -I unix
 automake-1.8
 autoconf
