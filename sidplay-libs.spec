@@ -162,6 +162,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %mdkversion >= 1020
 %multiarch %multiarch_includedir/sidplay/
 %endif
+
 %{_libdir}/libsidplay*.so
 %{_libdir}/libsidplay*.a
 %{_libdir}/libsidplay*.la
