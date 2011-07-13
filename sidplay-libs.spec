@@ -6,7 +6,7 @@
 %define develnamesu %mklibname -d sidutils
 %define staticdevelnamesu %mklibname -s -d sidutils
 %define version 2.1.1
-%define release %mkrel 9
+%define release %mkrel 10
 %define builders %{_libdir}/sidplay/builders
 
 
