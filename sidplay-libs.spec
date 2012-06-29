@@ -1,28 +1,24 @@
-%define name sidplay-libs
 %define spmajor 2
 %define libname    %mklibname sidplay %{spmajor}
 %define sumajor 0
 %define libnamesu %mklibname sidutils %{sumajor}
 %define develnamesu %mklibname -d sidutils
 %define staticdevelnamesu %mklibname -s -d sidutils
-%define version 2.1.1
-%define release %mkrel 10
 %define builders %{_libdir}/sidplay/builders
 
 
 Summary:        A Commodore 64 music player and SID chip emulator library
-Name:           %{name}
-Version:        %{version}
-Release:        %{release}
-Source:         http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
+Name:           sidplay-libs
+Version:        2.1.1
+Release:        11
+Source0:        http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
 Patch:		sidplay-libs-2.1.1-gcc4.3.patch
 #gw from xsidplay 2.0.3
 Patch1:		cia1.patch
 License:        GPLv2+
 Group:          System/Libraries
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 URL:            http://sidplay2.sourceforge.net/
-BuildRequires:	automake1.8
+BuildRequires:	automake
 BuildRequires:  chrpath
 
 %description
@@ -100,13 +96,13 @@ for developing applications to use %libnamesu.
 %setup -q 
 %patch -p1 -b .gcc
 %patch1 -p1
-aclocal-1.8 -I unix
-automake-1.8
+aclocal -I unix
+automake -a
 autoconf
 cd resid
-aclocal-1.8
+aclocal
 libtoolize --copy --force
-automake-1.8
+automake -a
 autoconf
 cd ..
 
@@ -165,9 +161,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %{_libdir}/libsidplay*.so
 %{_libdir}/libsidplay*.a
-%{_libdir}/libsidplay*.la
 %{_libdir}/pkgconfig/libsidplay*.pc
-%{builders}/*.la
 %{builders}/*.a
 
 %files -n %libnamesu
@@ -179,7 +173,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %dir %{_includedir}/sidplay/utils/
 %{_includedir}/sidplay/utils/*
-%{_libdir}/libsidutils*.la
 %{_libdir}/libsidutils*.so
 %_libdir/pkgconfig/libsidutils*pc
 
