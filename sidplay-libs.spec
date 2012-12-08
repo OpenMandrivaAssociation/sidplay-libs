@@ -6,20 +6,19 @@
 %define staticdevelnamesu %mklibname -s -d sidutils
 %define builders %{_libdir}/sidplay/builders
 
-
-Summary:        A Commodore 64 music player and SID chip emulator library
-Name:           sidplay-libs
-Version:        2.1.1
-Release:        11
-Source0:        http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
-Patch:		sidplay-libs-2.1.1-gcc4.3.patch
+Summary:	A Commodore 64 music player and SID chip emulator library
+Name:		sidplay-libs
+Version:	2.1.1
+Release:	12
+License:	GPLv2+
+Group:		System/Libraries
+URL:		http://sidplay2.sourceforge.net/
+Source0:	http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
+Patch0:		sidplay-libs-2.1.1-gcc4.3.patch
 #gw from xsidplay 2.0.3
 Patch1:		cia1.patch
-License:        GPLv2+
-Group:          System/Libraries
-URL:            http://sidplay2.sourceforge.net/
 BuildRequires:	automake
-BuildRequires:  chrpath
+BuildRequires:	chrpath
 
 %description
 This is a cycle-based version of a C64 music playing library
@@ -31,11 +30,11 @@ A ReSID Builder Class using a modified version of ReSID 0.13
 is included in this package. Alternative/updated classes can be
 obtained from the SIDPlay2 homepage.
 
-%package -n %libname
-Summary:        A Commodore 64 music player and SID chip emulator library
-Group:          System/Libraries
+%package -n %{libname}
+Summary:	A Commodore 64 music player and SID chip emulator library
+Group:		System/Libraries
 
-%description -n %libname
+%description -n %{libname}
 This is a cycle-based version of a C64 music playing library
 developed by Simon White. This library provides no internal
 SID emulation. Instead a means to drive any external SID hardware or
@@ -46,55 +45,53 @@ is included in this package. Alternative/updated classes can be
 obtained from the SIDPlay2 homepage.
 
 #gw don't use libsidplay-devel here, that's libsidplay1
-%package -n %libname-devel
-Summary:        Development headers and libraries for %{libname}
-Group:          Development/C++
-Requires:       %{libname} = %{version}
-Provides:       libsidplay-devel = %{version}-%release
-Provides:	sidplay2-devel = %version-%release
-Requires:	pkgconfig
+%package -n %{libname}-devel
+Summary:	Development headers and libraries for %{libname}
+Group:		Development/C++
+Requires:	%{libname} = %{version}
+Provides:	libsidplay-devel = %{version}-%{release}
+Provides:	sidplay2-devel = %{version}-%{release}
 
-%description -n %libname-devel
+%description -n %{libname}-devel
 This package includes the header and library files necessary
 for developing applications to use %{libname}.
 
-%package -n %libnamesu
-Summary:        General utility library for use in sidplayers
-Requires:	%libname = %version
-Group:          System/Libraries
-%description -n %libnamesu
+%package -n %{libnamesu}
+Summary:	General utility library for use in sidplayers
+Requires:	%{libname} = %{version}-%{release}
+Group:		System/Libraries
+
+%description -n %{libnamesu}
 This library provides general utilities that are not considered core
 to the C64 emulation.  Utilities include decoding and obtaining tune
 lengths from the songlength database, INI file format parser and SID
 filter files (types 1 and 2).
 
-%package -n %develnamesu
-Summary:        Development headers and libraries for libsidutils
-Group:          Development/C++
-Requires:       %libnamesu = %{version}
-Requires:	%libname-devel = %version
-Provides:       libsidutils-devel = %{version}-%release
-Obsoletes:	%mklibname -d sidutils 0
+%package -n %{develnamesu}
+Summary:	Development headers and libraries for libsidutils
+Group:		Development/C++
+Requires:	%{libnamesu} = %{version}-%{release}
+Requires:	%{libname}-devel = %{version}-%{release}
+Provides:	libsidutils-devel = %{version}-%{release}
 
-%description -n %develnamesu
+%description -n %{develnamesu}
 This package includes the header and library files necessary
-for developing applications to use %libnamesu.
+for developing applications to use %{libnamesu}.
 
-%package -n %staticdevelnamesu
-Summary:        Static library for %libnamesu
-Group:          Development/C++
-Requires:       %develnamesu = %{version}
-Obsoletes:	%mklibname -s -d sidutils 0
-Provides:	libsidutils-static-devel = %version-%release
+%package -n %{staticdevelnamesu}
+Summary:	Static library for %{libnamesu}
+Group:		Development/C++
+Requires:	%{develnamesu} = %{version}
+Provides:	libsidutils-static-devel = %{version}-%{release}
 
-%description -n %staticdevelnamesu
+%description -n %{staticdevelnamesu}
 This package includes the static library file necessary
-for developing applications to use %libnamesu.
+for developing applications to use %{libnamesu}.
 
 
 %prep
-%setup -q 
-%patch -p1 -b .gcc
+%setup -q
+%patch0 -p1 -b .gcc
 %patch1 -p1
 aclocal -I unix
 automake -a
@@ -113,69 +110,83 @@ export CXXFLAGS="%optflags -fPIC"
 %make
 
 %install
-rm -rf $RPM_BUILD_ROOT 
 #hack to prevent relinking
 sed s/relink_command.*// < libsidutils/src/libsidutils.la > tmp.la
 mv tmp.la libsidutils/src/libsidutils.la
 %makeinstall_std
-chrpath -d %buildroot%_libdir/libsidutils.so
+chrpath -d %{buildroot}%{_libdir}/libsidutils.so
 
-rm -f %buildroot%builders/libsid*
-rm -rf %buildroot%builders/pkgconfig
+rm -f %{buildroot}%{builders}/libsid*
+rm -rf %{buildroot}%{builders}/pkgconfig
 
-%if %mdkversion >= 1020
-%multiarch_includes %buildroot%_includedir/sidplay/sidconfig.h
-%endif
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%if %mdkversion < 200900
-%post -n %libname -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %libname -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%post -n %libnamesu -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %libnamesu -p /sbin/ldconfig
-%endif
+%multiarch_includes %{buildroot}%{_includedir}/sidplay/sidconfig.h
 
 %files -n %libname
-%defattr(-,root,root)
 %doc libsidplay/AUTHORS libsidplay/ChangeLog libsidplay/README libsidplay/TODO
 %{_libdir}/libsidplay*.so.*
 
 %files -n %libname-devel
-%defattr(-,root,root)
 %dir %{_libdir}/sidplay/
 %dir %{_libdir}/sidplay/builders
 %dir %{_includedir}/sidplay/builders/
 %{_includedir}/sidplay/*.h
 %{_includedir}/sidplay/builders/*.h
-%if %mdkversion >= 1020
-%multiarch %multiarch_includedir/sidplay/
-%endif
+%multiarch %{multiarch_includedir}/sidplay/
 
 %{_libdir}/libsidplay*.so
 %{_libdir}/libsidplay*.a
 %{_libdir}/pkgconfig/libsidplay*.pc
 %{builders}/*.a
 
-%files -n %libnamesu
-%defattr(-,root,root)
+%files -n %{libnamesu}
 %doc libsidutils/AUTHORS libsidutils/ChangeLog libsidutils/README libsidutils/TODO
 %{_libdir}/libsidutils*.so.*
 
-%files -n %develnamesu
-%defattr(-,root,root)
+%files -n %{develnamesu}
 %dir %{_includedir}/sidplay/utils/
 %{_includedir}/sidplay/utils/*
 %{_libdir}/libsidutils*.so
-%_libdir/pkgconfig/libsidutils*pc
+%{_libdir}/pkgconfig/libsidutils*pc
 
-%files -n %staticdevelnamesu
-%defattr(-,root,root)
+%files -n %{staticdevelnamesu}
 %{_libdir}/libsidutils*.a
+
+
+%changelog
+* Fri Jun 29 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.1.1-11
++ Revision: 807480
+- Get rid of bogus .la files
+- Don't BuildRequire prehistoric auto* tools
+- Clean up spec file
+
+* Wed Jul 13 2011 Götz Waschk <waschk@mandriva.org> 2.1.1-10
++ Revision: 689842
+- work around rpm macro bug
+- rebuild
+
+* Fri May 22 2009 Götz Waschk <waschk@mandriva.org> 2.1.1-9mdv2011.0
++ Revision: 378682
+- rebuild
+
+* Wed May 06 2009 Götz Waschk <waschk@mandriva.org> 2.1.1-8mdv2010.0
++ Revision: 372560
+- add cia1 timer support for xsidplay
+
+* Mon Jul 07 2008 Götz Waschk <waschk@mandriva.org> 2.1.1-7mdv2009.0
++ Revision: 232324
+- update the patch for gcc 4.3
+- update license
+- fix devel name for the sidutils package
+
+  + Pixel <pixel@mandriva.com>
+    - do not call ldconfig in %%post/%%postun, it is now handled by filetriggers
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - fix no-buildroot-tag
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Fri Jul 06 2007 Götz Waschk <waschk@mandriva.org> 2.1.1-6mdv2008.0
++ Revision: 48919
+- bump release
+- Import sidplay-libs
+
