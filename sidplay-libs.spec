@@ -131,7 +131,7 @@ rm -rf %{buildroot}%{builders}/pkgconfig
 %dir %{_includedir}/sidplay/builders/
 %{_includedir}/sidplay/*.h
 %{_includedir}/sidplay/builders/*.h
-%multiarch %{multiarch_includedir}/sidplay/
+%{multiarch_includedir}/sidplay/
 
 %{_libdir}/libsidplay*.so
 %{_libdir}/libsidplay*.a
