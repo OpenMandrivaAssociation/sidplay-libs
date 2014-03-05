@@ -3,7 +3,6 @@
 %define sumajor 0
 %define libnamesu %mklibname sidutils %{sumajor}
 %define develnamesu %mklibname -d sidutils
-%define staticdevelnamesu %mklibname -s -d sidutils
 %define builders %{_libdir}/sidplay/builders
 
 Summary:	A Commodore 64 music player and SID chip emulator library
@@ -76,17 +75,6 @@ Provides:	libsidutils-devel = %{version}-%{release}
 This package includes the header and library files necessary
 for developing applications to use %{libnamesu}.
 
-%package -n %{staticdevelnamesu}
-Summary:	Static library for %{libnamesu}
-Group:		Development/C++
-Requires:	%{develnamesu} = %{version}
-Provides:	libsidutils-static-devel = %{version}-%{release}
-
-%description -n %{staticdevelnamesu}
-This package includes the static library file necessary
-for developing applications to use %{libnamesu}.
-
-
 %prep
 %setup -q
 %patch0 -p1 -b .gcc
@@ -148,10 +136,6 @@ sed -i -e 's,${libdir}/libsidplay2.la,-lsidplay2,g' %{buildroot}%{_libdir}/pkgco
 %{_includedir}/sidplay/utils/*
 %{_libdir}/libsidutils*.so
 %{_libdir}/pkgconfig/libsidutils*pc
-
-%files -n %{staticdevelnamesu}
-%{_libdir}/libsidutils*.a
-
 
 %changelog
 * Fri Jun 29 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.1.1-11
