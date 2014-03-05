@@ -9,7 +9,7 @@
 Summary:	A Commodore 64 music player and SID chip emulator library
 Name:		sidplay-libs
 Version:	2.1.1
-Release:	13
+Release:	19
 License:	GPLv2+
 Group:		System/Libraries
 URL:		http://sidplay2.sourceforge.net/
@@ -91,15 +91,16 @@ for developing applications to use %{libnamesu}.
 %setup -q
 %patch0 -p1 -b .gcc
 %patch1 -p1
-aclocal -I unix
-automake -a
-autoconf
-cd resid
-aclocal
-libtoolize --copy --force
-automake -a
-autoconf
-cd ..
+for i in . * */*; do
+	[ -d "$i" ] || continue
+	[ -e "$i/configure.in" -o -e "$i/configure.ac" ] || continue
+	pushd $i
+	aclocal -I unix
+	libtoolize --copy --force
+	automake -a
+	autoconf
+	popd
+done
 
 %build
 export CFLAGS="%optflags -fPIC"
@@ -118,6 +119,8 @@ rm -f %{buildroot}%{builders}/libsid*
 rm -rf %{buildroot}%{builders}/pkgconfig
 
 %multiarch_includes %{buildroot}%{_includedir}/sidplay/sidconfig.h
+
+sed -i -e 's,${libdir}/libsidplay2.la,-lsidplay2,g' %{buildroot}%{_libdir}/pkgconfig/*.pc
 
 %files -n %libname
 %doc libsidplay/AUTHORS libsidplay/ChangeLog libsidplay/README libsidplay/TODO
