@@ -9,7 +9,7 @@
 Summary:	A Commodore 64 music player and SID chip emulator library
 Name:		sidplay-libs
 Version:	2.1.1
-Release:	14
+Release:	15
 License:	GPLv2+
 Group:		System/Libraries
 URL:		http://sidplay2.sourceforge.net/
@@ -44,12 +44,10 @@ A ReSID Builder Class using a modified version of ReSID 0.13
 is included in this package. Alternative/updated classes can be
 obtained from the SIDPlay2 homepage.
 
-#gw don't use libsidplay-devel here, that's libsidplay1
 %package -n %{libname}-devel
 Summary:	Development headers and libraries for %{libname}
 Group:		Development/C++
 Requires:	%{libname} = %{version}
-Provides:	libsidplay-devel = %{version}-%{release}
 Provides:	sidplay2-devel = %{version}-%{release}
 
 %description -n %{libname}-devel
