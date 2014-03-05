@@ -123,7 +123,6 @@ sed -i -e 's,${libdir}/libsidplay2.la,-lsidplay2,g' %{buildroot}%{_libdir}/pkgco
 %{multiarch_includedir}/sidplay/
 
 %{_libdir}/libsidplay*.so
-%{_libdir}/libsidplay*.a
 %{_libdir}/pkgconfig/libsidplay*.pc
 %{builders}/*.a
 
