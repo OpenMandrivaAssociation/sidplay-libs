@@ -92,9 +92,10 @@ pushd libsidplay
 %make
 popd
 pushd libsidutils
-%configure2_5x	--enable-shared
-
-
+%configure2_5x	--enable-shared \
+		--with-sidplay2-dir=../libsidplay \
+		--with-sidplay2-includes=../libsidplay/include \
+		--with-sidplay2-library=../libsidplay/src
 %make LIBVERSION="%{spmajor}:0:1"
 popd
 
