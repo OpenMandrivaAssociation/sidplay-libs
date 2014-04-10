@@ -100,7 +100,8 @@ pushd libsidutils
 %configure2_5x	--enable-shared \
 		--with-sidplay2=../libsidplay \
 		--with-sidplay2-includes=../libsidplay/include \
-		--with-sidplay2-library=../libsidplay/src
+		--with-sidplay2-library=../libsidplay/src \
+		--disable-library-checks
 %make LIBVERSION="%{spmajor}:0:1"
 popd
 
