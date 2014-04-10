@@ -92,17 +92,18 @@ for dir in libsidplay libsidutils; do
 done
 
 %build
-LD_LIBRARY_PATH="$PWD/libsidplay/src/.libs"
-CPPFLAGS="-I$PWD/libsidplay/include"
+LIBSIDPLAY="$PWD/libsidplay"
+INCLUDES="$PWD/libsidplay/include"
+LIBRARY="$PWD/libsidplay/src"
 pushd libsidplay
 %configure2_5x	--enable-shared
 %make
 popd
 pushd libsidutils
 %configure2_5x	--enable-shared \
-		--with-sidplay2=../libsidplay \
-		--with-sidplay2-includes=../libsidplay/include \
-		--with-sidplay2-library=../../libsidplay/src \
+		--with-sidplay2="$LIBSIDPLAY" \
+		--with-sidplay2-includes="$INCLUDES" \
+		--with-sidplay2-library="$LIBRARY" \
 		--disable-library-checks
 %make LIBVERSION="%{spmajor}:0:1"
 popd
