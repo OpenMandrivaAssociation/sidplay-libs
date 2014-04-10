@@ -1,23 +1,22 @@
-%define spmajor 2
-%define libname    %mklibname sidplay %{spmajor}
+%define spmajor 1
+%define libname    %mklibname sidplay 2 %{spmajor}
 %define sumajor 0
 %define libnamesu %mklibname sidutils %{sumajor}
 %define develnamesu %mklibname -d sidutils
-%define builders %{_libdir}/sidplay/builders
 
 Summary:	A Commodore 64 music player and SID chip emulator library
 Name:		sidplay-libs
-Version:	2.1.1
-Release:	19
+Version:	2.1.2
+Release:	0.svn1452.1
 License:	GPLv2+
 Group:		System/Libraries
 URL:		http://sidplay2.sourceforge.net/
-Source0:	http://prdownloads.sourceforge.net/sidplay2/%{name}-%version.tar.bz2
-Patch0:		sidplay-libs-2.1.1-gcc4.3.patch
+Source0:	http://prdownloads.sourceforge.net/sidplay2/%{name}-%{version}.tar.xz
 #gw from xsidplay 2.0.3
-Patch1:		cia1.patch
-BuildRequires:	automake
-BuildRequires:	chrpath
+Patch1:		sidplay-libs-2.1.2-cia.patch
+Patch3:         sidplay-libs-2.1.1-pkgconfig.patch
+Patch4:		sidplay-libs-2.1.2-autofoo-fixes.patch
+Patch5:		sidplay-libs-2.1.2-fix-broken-exceptions.check.patch
 
 %description
 This is a cycle-based version of a C64 music playing library
@@ -46,8 +45,8 @@ obtained from the SIDPlay2 homepage.
 %package -n %{libname}-devel
 Summary:	Development headers and libraries for %{libname}
 Group:		Development/C++
-Requires:	%{libname} = %{version}
-Provides:	sidplay2-devel = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Provides:	sidplay2-devel = %{EVRD}
 
 %description -n %{libname}-devel
 This package includes the header and library files necessary
@@ -55,7 +54,7 @@ for developing applications to use %{libname}.
 
 %package -n %{libnamesu}
 Summary:	General utility library for use in sidplayers
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 Group:		System/Libraries
 
 %description -n %{libnamesu}
@@ -67,9 +66,9 @@ filter files (types 1 and 2).
 %package -n %{develnamesu}
 Summary:	Development headers and libraries for libsidutils
 Group:		Development/C++
-Requires:	%{libnamesu} = %{version}-%{release}
-Requires:	%{libname}-devel = %{version}-%{release}
-Provides:	libsidutils-devel = %{version}-%{release}
+Requires:	%{libnamesu} = %{EVRD}
+Requires:	%{libname}-devel = %{EVRD}
+Provides:	sidutils-devel = %{EVRD}
 
 %description -n %{develnamesu}
 This package includes the header and library files necessary
@@ -77,63 +76,52 @@ for developing applications to use %{libnamesu}.
 
 %prep
 %setup -q
-%patch0 -p1 -b .gcc
-%patch1 -p1
-for i in . * */*; do
-	[ -d "$i" ] || continue
-	[ -e "$i/configure.in" -o -e "$i/configure.ac" ] || continue
-	pushd $i
-	aclocal -I unix
-	libtoolize --copy --force
-	automake -a
-	autoconf
+%apply_patches
+for dir in libsidplay libsidutils; do
+	pushd $dir
+	#ugly libtool hack..
+	echo '/usr/bin/libtool --tag=CXX $@' > libtool
+	chmod +x libtool
+	./bootstrap
 	popd
 done
 
 %build
-export CFLAGS="%optflags -fPIC"
-export CXXFLAGS="%optflags -fPIC"
-%configure2_5x
+pushd libsidplay
+%configure2_5x	--enable-shared
 %make
+popd
+pushd libsidutils
+%configure2_5x	--enable-shared
+
+
+%make LIBVERSION="%{spmajor}:0:1"
+popd
 
 %install
-#hack to prevent relinking
-sed s/relink_command.*// < libsidutils/src/libsidutils.la > tmp.la
-mv tmp.la libsidutils/src/libsidutils.la
-%makeinstall_std
-chrpath -d %{buildroot}%{_libdir}/libsidutils.so
+%makeinstall_std -C libsidplay
+%makeinstall_std -C libsidutils
 
-rm -f %{buildroot}%{builders}/libsid*
-rm -rf %{buildroot}%{builders}/pkgconfig
-
-%multiarch_includes %{buildroot}%{_includedir}/sidplay/sidconfig.h
-
-sed -i -e 's,${libdir}/libsidplay2.la,-lsidplay2,g' %{buildroot}%{_libdir}/pkgconfig/*.pc
-
-%files -n %libname
+%files -n %{libname}
 %doc libsidplay/AUTHORS libsidplay/ChangeLog libsidplay/README libsidplay/TODO
-%{_libdir}/libsidplay*.so.*
+%{_libdir}/libsidplay2.so.%{spmajor}*
 
-%files -n %libname-devel
-%dir %{_libdir}/sidplay/
-%dir %{_libdir}/sidplay/builders
-%dir %{_includedir}/sidplay/builders/
+%files -n %{libname}-devel
+%dir %{_includedir}/sidplay/
 %{_includedir}/sidplay/*.h
-%{_includedir}/sidplay/builders/*.h
-%{multiarch_includedir}/sidplay/
-
-%{_libdir}/libsidplay*.so
-%{_libdir}/pkgconfig/libsidplay*.pc
-%{builders}/*.a
+%{_libdir}/libsidplay2.so
+%{_libdir}/pkgconfig/libsidplay2.pc
 
 %files -n %{libnamesu}
 %doc libsidutils/AUTHORS libsidutils/ChangeLog libsidutils/README libsidutils/TODO
-%{_libdir}/libsidutils*.so.*
+%{_libdir}/libsidutils.so.%{sumajor}*
 
 %files -n %{develnamesu}
+%dir %{_includedir}/sidplay/imp
+%{_includedir}/sidplay/imp/*.h
 %dir %{_includedir}/sidplay/utils/
-%{_includedir}/sidplay/utils/*
-%{_libdir}/libsidutils*.so
+%{_includedir}/sidplay/utils/*.h
+%{_libdir}/libsidutils.so
 %{_libdir}/pkgconfig/libsidutils*pc
 
 %changelog

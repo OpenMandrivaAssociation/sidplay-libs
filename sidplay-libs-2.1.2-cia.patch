@@ -1,0 +1,107 @@
+--- sidplay-libs-2.1.2/libsidplay/include/sidplay/sidplay2.h.0001~	2014-01-05 03:14:15.310550059 +0100
++++ sidplay-libs-2.1.2/libsidplay/include/sidplay/sidplay2.h	2014-01-05 03:16:11.730552126 +0100
+@@ -43,6 +43,7 @@ public:
+     virtual void           pause        (void) = 0;
+     virtual uint_least32_t play         (void *buffer, uint_least32_t length) = 0;
+     virtual sid2_player_t  state        (void) const = 0;
++    int            cia1_last_ta (void) const;
+     virtual void           stop         (void) = 0;
+     virtual void           debug        (bool enable, FILE *out) = 0;
+ };
+--- sidplay-libs-2.1.2/libsidplay/src/mos6526/mos6526.cpp.0001~	2008-05-05 13:33:15.000000000 +0200
++++ sidplay-libs-2.1.2/libsidplay/src/mos6526/mos6526.cpp	2014-01-05 03:14:15.310550059 +0100
+@@ -187,6 +187,7 @@ void MOS6526::reset (void)
+ {
+     ta  = ta_latch = 0xffff;
+     tb  = tb_latch = 0xffff;
++    last_ta = 0;
+     ta_underflow = tb_underflow = false;
+     cra = crb = sdr_out = 0;
+     sdr_count = 0;
+@@ -335,9 +336,19 @@ void MOS6526::write (uint_least8_t addr,
+     case PRB: case DDRB:
+         portB ();
+         break;
+-    case TAL: endian_16lo8 (ta_latch, data); break;
++    case TAL: 
++        endian_16lo8 (ta_latch, data);
++        // store last timer A value to calculate song speed
++        if (ta_latch != 0) {
++          last_ta = ta_latch;
++        }
++    break;
+     case TAH:
+         endian_16hi8 (ta_latch, data);
++        // store last timer A value to calculate song speed
++        if (ta_latch != 0) {
++          last_ta = ta_latch;
++        }
+         if (!(cra & 0x01)) // Reload timer if stopped
+             ta = ta_latch;
+     break;
+--- sidplay-libs-2.1.2/libsidplay/src/mos6526/mos6526.h.0001~	2008-02-27 22:01:45.000000000 +0100
++++ sidplay-libs-2.1.2/libsidplay/src/mos6526/mos6526.h	2014-01-05 03:14:15.310550059 +0100
+@@ -110,6 +110,10 @@ class MOS6526: public CoComponent<ISidCo
+ private:
+     static const char *credit;
+ 
++public:
++    // The last timer A value to calculate song speed.
++    int last_ta;
++
+ protected:
+     uint8_t regs[0x10];
+     bool    cnt_high;
+--- sidplay-libs-2.1.2/libsidplay/src/player.h.0001~	2014-01-05 03:14:15.320550060 +0100
++++ sidplay-libs-2.1.2/libsidplay/src/player.h	2014-01-05 03:18:19.210554389 +0100
+@@ -475,6 +475,7 @@ public:
+     void           debug        (bool enable, FILE *out)
+                                 { cpu.debug (enable, out); }
+     const char    *error        (void) const { return m_errorString; }
++    int           cia1_last_ta  (void) { return (m_info.environment == sid2_envR) ? cia.last_ta : sid6526.last_ta; }
+     int            fastForward  (uint percent);
+     int            load         (SidTune *tune);
+     uint_least32_t mileage      (void) const { return m_mileage + time(); }
+--- sidplay-libs-2.1.2/libsidplay/src/sid6526/sid6526.cpp.0001~	2008-05-05 13:33:15.000000000 +0200
++++ sidplay-libs-2.1.2/libsidplay/src/sid6526/sid6526.cpp	2014-01-05 03:14:15.320550060 +0100
+@@ -96,6 +96,7 @@ void SID6526::reset (bool seed)
+ {
+     locked = false;
+     ta   = ta_latch = m_count;
++    last_ta = 0;
+     cra  = 0;
+     // Initialise random number generator
+     if (seed)
+@@ -147,9 +148,19 @@ void SID6526::write (uint_least8_t addr,
+ 
+     switch (addr)
+     {
+-    case 0x4: endian_16lo8 (ta_latch, data); break;
++    case 0x4: 
++        endian_16lo8 (ta_latch, data); 
++        // store last timer A value to calculate song speed
++        if (ta_latch != 0) {
++          last_ta = ta_latch;
++        }
++        break;
+     case 0x5:
+         endian_16hi8 (ta_latch, data);
++        // store last timer A value to calculate song speed
++        if (ta_latch != 0) {
++          last_ta = ta_latch;
++        }
+         if (!(cra & 0x01)) // Reload timer if stopped
+             ta = ta_latch;
+     break;
+--- sidplay-libs-2.1.2/libsidplay/src/sid6526/sid6526.h.0001~	2014-01-05 03:14:15.320550060 +0100
++++ sidplay-libs-2.1.2/libsidplay/src/sid6526/sid6526.h	2014-01-05 03:19:07.280555242 +0100
+@@ -62,6 +62,9 @@ SIDPLAY2_NAMESPACE_START
+ 
+ class SID6526: public CoComponent<ISidComponent>, private Event
+ {
++public:
++    // The last timer A value to calculate song speed.
++    int last_ta;
+ private:
+ 
+     static const char * const credit;

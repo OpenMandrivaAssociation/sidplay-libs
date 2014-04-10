@@ -1,0 +1,55 @@
+--- sidplay-libs-2.1.2/builders/hardsid-builder/unix/my_macros.m4.0002~	2005-11-29 23:57:07.000000000 +0100
++++ sidplay-libs-2.1.2/builders/hardsid-builder/unix/my_macros.m4	2014-01-05 02:48:22.010522485 +0100
+@@ -132,7 +132,7 @@ AC_DEFUN([MY_CHECK_EXCEPTIONS],
+     [
+         AC_TRY_COMPILE(
+             [#include <new>],
+-            [char* buf = std::new(nothrow) char[1024];],
++            [char* buf = new(std::nothrow) char[1024];],
+             [test_cv_have_exceptions=yes],
+             [test_cv_have_exceptions=no]
+         )
+--- sidplay-libs-2.1.2/builders/resid-builder/unix/my_macros.m4.0002~	2005-11-29 23:57:07.000000000 +0100
++++ sidplay-libs-2.1.2/builders/resid-builder/unix/my_macros.m4	2014-01-05 02:48:22.010522485 +0100
+@@ -132,7 +132,7 @@ AC_DEFUN([MY_CHECK_EXCEPTIONS],
+     [
+         AC_TRY_COMPILE(
+             [#include <new>],
+-            [char* buf = std::new(nothrow) char[1024];],
++            [char* buf = new(std::nothrow) char[1024];],
+             [test_cv_have_exceptions=yes],
+             [test_cv_have_exceptions=no]
+         )
+--- sidplay-libs-2.1.2/libsidplay/unix/my_macros.m4.0002~	2005-11-29 23:57:07.000000000 +0100
++++ sidplay-libs-2.1.2/libsidplay/unix/my_macros.m4	2014-01-05 02:48:22.010522485 +0100
+@@ -132,7 +132,7 @@ AC_DEFUN([MY_CHECK_EXCEPTIONS],
+     [
+         AC_TRY_COMPILE(
+             [#include <new>],
+-            [char* buf = std::new(nothrow) char[1024];],
++            [char* buf = new(std::nothrow) char[1024];],
+             [test_cv_have_exceptions=yes],
+             [test_cv_have_exceptions=no]
+         )
+--- sidplay-libs-2.1.2/libsidutils/unix/my_macros.m4.0002~	2005-11-29 23:57:07.000000000 +0100
++++ sidplay-libs-2.1.2/libsidutils/unix/my_macros.m4	2014-01-05 02:48:22.010522485 +0100
+@@ -132,7 +132,7 @@ AC_DEFUN([MY_CHECK_EXCEPTIONS],
+     [
+         AC_TRY_COMPILE(
+             [#include <new>],
+-            [char* buf = std::new(nothrow) char[1024];],
++            [char* buf = new(std::nothrow) char[1024];],
+             [test_cv_have_exceptions=yes],
+             [test_cv_have_exceptions=no]
+         )
+--- sidplay-libs-2.1.2/sidplay/unix/my_macros.m4.0002~	2005-11-29 23:57:07.000000000 +0100
++++ sidplay-libs-2.1.2/sidplay/unix/my_macros.m4	2014-01-05 02:48:22.020522485 +0100
+@@ -132,7 +132,7 @@ AC_DEFUN([MY_CHECK_EXCEPTIONS],
+     [
+         AC_TRY_COMPILE(
+             [#include <new>],
+-            [char* buf = std::new(nothrow) char[1024];],
++            [char* buf = new(std::nothrow) char[1024];],
+             [test_cv_have_exceptions=yes],
+             [test_cv_have_exceptions=no]
+         )
