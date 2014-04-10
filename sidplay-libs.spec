@@ -17,6 +17,7 @@ Patch1:		sidplay-libs-2.1.2-cia.patch
 Patch3:         sidplay-libs-2.1.1-pkgconfig.patch
 Patch4:		sidplay-libs-2.1.2-autofoo-fixes.patch
 Patch5:		sidplay-libs-2.1.2-fix-broken-exceptions.check.patch
+Patch6:		sidplay-libs-2.1.2-fix-variable-name.patch
 
 %description
 This is a cycle-based version of a C64 music playing library
