@@ -1,0 +1,23 @@
+--- sidplay-libs-2.1.2/libsidplay/unix/libsidplay2.pc.in.0003~	2002-11-04 23:24:17.000000000 +0100
++++ sidplay-libs-2.1.2/libsidplay/unix/libsidplay2.pc.in	2014-01-06 14:20:59.004965701 +0100
+@@ -2,10 +2,9 @@ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+ libdir=@libdir@
+ includedir=@includedir@
+-builders=@builders@
+ 
+ Name: @PACKAGE@
+ Description: C64 cycle exact stereo sidplayer library.
+ Version: @VERSION@
+-Libs: ${libdir}/libsidplay2.la
++Libs: -lsidplay2
+ Cflags: -DHAVE_UNIX -I${includedir}
+--- sidplay-libs-2.1.2/libsidutils/unix/libsidutils.pc.in.0003~	2002-11-04 22:09:58.000000000 +0100
++++ sidplay-libs-2.1.2/libsidutils/unix/libsidutils.pc.in	2014-01-06 14:12:18.424960582 +0100
+@@ -6,5 +6,5 @@ includedir=@includedir@
+ Name: @PACKAGE@
+ Description: Utils for supporting the libsidplay2 library.
+ Version: @VERSION@
+-Libs: ${libdir}/libsidutils.la
++Libs: -lsidutils
+ Cflags: -DHAVE_UNIX -I${includedir}
