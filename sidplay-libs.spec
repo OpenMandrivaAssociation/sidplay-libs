@@ -81,7 +81,7 @@ for developing applications to use %{libnamesu}.
 
 %prep
 %setup -q
-%apply_patches
+%autopatch -p1
 for dir in libsidplay libsidutils; do
 	pushd $dir
 	#ugly libtool hack..
