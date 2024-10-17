@@ -10,7 +10,7 @@ Version:	2.1.2
 Release:	0.svn1452.1
 License:	GPLv2+
 Group:		System/Libraries
-URL:		http://sidplay2.sourceforge.net/
+URL:		https://sidplay2.sourceforge.net/
 Source0:	http://prdownloads.sourceforge.net/sidplay2/%{name}-%{version}.tar.xz
 #gw from xsidplay 2.0.3
 Patch1:		sidplay-libs-2.1.2-cia.patch
